@@ -22,10 +22,13 @@
         <a href="#" class="list-group-item list-group-item-action active" style="background-color: #28a745; border-color: #28a745; border-radius: 0.25rem;">
           Вам должны - {{ summary }}
         </a>
+        <button  onclick="show_add_form()" id="btn_add_form" style="position: absolute; top: 0.6em; right: 1em; border: 2px solid #007bff; border-radius: 0.25em; width: 100px; height: 30px; text-align: center; color: #007bff; background-color: white">Добавить</button>
     {% else %}
         <a href="#" class="list-group-item list-group-item-action active">
           Суммарный долг - {{ summary }}
         </a>
+        <button  onclick="show_add_form()" id="btn_add_form" style="position: absolute; top: 0.6em; right: 1em; border: 2px solid #28a745; border-radius: 0.25em; width: 100px; height: 30px; text-align: center; color: #28a745; background-color: white">Добавить</button>
+
     {% endif %}
     </div>
 
@@ -33,8 +36,7 @@
         {% if debts_count > 0 %}
             <div class="list-group-item list-group-item-action active" style="border-radius: 0.25rem;">
                 Список долгов
-                <button  onclick="show_add_form()" id="btn_add_form" style="position: absolute; top: 0.6em; right: 1em; border: 2px solid #28a745; border-radius: 0.25em; width: 100px; height: 30px; text-align: center; color: #28a745; background-color: white">Добавить</button>
-            </div>
+                </div>
             <div class="users_list">
                 {% for rel in debts %}
                     <div id="debt_user:{{ rel.user.id }}" style="margin-bottom: 5px; margin-top: 5px; border-radius: 0.5rem;">
