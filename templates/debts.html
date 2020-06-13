@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Долги</title>
+    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'css/debts.css' %}" rel="stylesheet" type="text/css">
+    <script src="{% static 'js/jquery.min.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/debts.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/time.js' %}" type="text/javascript"></script>
+</head>
+<body style="padding: 5px;">
+    <nav class="navbar navbar-light bg-light justify-content-between">
+        <a class="navbar-brand">Здравствуйте, {{ user }}</a>
+        <form class="form-inline" action="/auth/logout" method="get">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Выход</button>
+        </form>
+    </nav>
+    <div class="list-group" style="margin-bottom: 5px;">
+    {% if is_positive %}
+        <a href="#" class="list-group-item list-group-item-action active" style="background-color: #28a745; border-color: #28a745; border-radius: 0.25rem;">
+          Вам должны - {{ summary }}
+        </a>
+    {% else %}
+        <a href="#" class="list-group-item list-group-item-action active">
+          Суммарный долг - {{ summary }}
+        </a>
+    {% endif %}
+    </div>
+
+    <div>
+        {% if debts_count > 0 %}
+            <div class="list-group-item list-group-item-action active" style="border-radius: 0.25rem;">
+                Список долгов
+                <button  onclick="show_add_form()" id="btn_add_form" style="position: absolute; top: 0.6em; right: 1em; border: 2px solid #28a745; border-radius: 0.25em; width: 100px; height: 30px; text-align: center; color: #28a745; background-color: white">Добавить</button>
+            </div>
+            <div class="users_list">
+                {% for rel in debts %}
+                    <div id="debt_user:{{ rel.user.id }}" style="margin-bottom: 5px; margin-top: 5px; border-radius: 0.5rem;">
+                        <a href="#" class="list-group-item list-group-item-action" onclick="expand_debts(this, {{rel.user.id}})">
+                            {{ rel.user }}:
+                            {% if rel.is_positive %} +{{ rel.summary }}
+                            {% else %} -{{ rel.summary }}
+                            {% endif %}<br>
+                        </a>
+                        <div class="debts_list" style="">
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="list-group-item list-group-item-action active" style="border-radius: 0.25rem;">У вас нет долгов</div>
+        {% endif %}
+    </div>
+    <div id="add_form" class="add_debt_form" style="display: none">
+        <form>
+            <h3 style="text-align: center">Добавление долга</h3>
+            <label for="text_input">Описание</label><br>
+            <input type="text" id="text_input" style="margin-bottom: 10px;"><br>
+            <label>Сумма</label><br>
+            <input type="number" id="price_input" style="margin-bottom: 10px"><br>
+            <label>Пользователь</label><br>
+            <select style="margin-bottom: 15px;" id="to_user_input">
+                {% for u in users %}
+                    <option value="{{ u.id }}">{{ u }}</option>
+                {% endfor %}
+            </select><br>
+            <button href="#" onclick="add_debt()" class="add_debt_button">Добавить</button>
+            <button type="submit" hidden></button>
+        </form>
+    </div>
+</body>
+</html>
