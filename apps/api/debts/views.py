@@ -39,18 +39,34 @@ class AddView(generics.GenericAPIView):
     def post(self, request):
         data = {'status': False, 'message': 'Неизвестная ошибка'}
         user = request.user
-        to_user_id = request.data.get('to_user')
-        try:
-            to_user = CustomUser.objects.get(pk=to_user_id)
-        except:
-            data['message'] = 'Пользователь не найден'
-            return Response(data=data, status=HTTP_200_OK)
-        if to_user.id == user.id:
-            data['message'] = 'Невозможно добавить долг самому себе'
-            return Response(data=data, status=HTTP_200_OK)
         price = abs(float(request.data.get('price').replace(',', '.').strip()))
         text = request.data.get('text') or ''
-        Debt.objects.create(user=to_user, to_user=user, text=text, price=price)
+        if price == 0:
+            data['message'] = 'Некорректный долг'
+            return Response(data=data, status=HTTP_200_OK)
+        is_common_debt = request.data.get('is_common_debt')
+        if type(is_common_debt) == str:
+            is_common_debt = True if is_common_debt in ['1', 'true'] else False
+        print('is_common_debt', is_common_debt)
+        if is_common_debt:
+            print('for')
+            users = CustomUser.objects.filter(Q(is_deleted=False) & Q(is_superuser=False))
+            for u in users:
+                if u.id != user.id:
+                    Debt.objects.create(user=u, to_user=user, text=text, price=int(price / 3))
+        else:
+            print('no for')
+            to_user_id = request.data.get('to_user')
+            try:
+                to_user = CustomUser.objects.get(pk=to_user_id)
+            except:
+                data['message'] = 'Пользователь не найден'
+                return Response(data=data, status=HTTP_200_OK)
+            if to_user.id == user.id:
+                data['message'] = 'Невозможно добавить долг самому себе'
+                return Response(data=data, status=HTTP_200_OK)
+            Debt.objects.create(user=to_user, to_user=user, text=text, price=price)
+
         data['status'] = True
         data['message'] = ''
         return Response(data=data, status=HTTP_200_OK)

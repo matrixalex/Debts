@@ -87,4 +87,4 @@ def my_debts(request):
     data['is_positive'] = True if summary > 0 else False
     data['summary'] = abs(summary)
     data['debts_count'] = debts_count
-    return render(request, 'debts.html', context=data)
+    return render(request, 'index.html', context=data)
