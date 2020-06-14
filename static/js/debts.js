@@ -77,7 +77,7 @@ function add_debt () {
         headers: {"Authorization": "Token " + token},
         data: {text: text, price: price, to_user: to_user, is_common_debt: is_common_debt},
         success: function (data) {
-            // window.location.reload();
+            window.location.reload();
         }
     })
 }
